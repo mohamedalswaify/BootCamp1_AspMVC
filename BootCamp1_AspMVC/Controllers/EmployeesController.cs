@@ -1,6 +1,8 @@
 ﻿using BootCamp1_AspMVC.Data;
 using BootCamp1_AspMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BootCamp1_AspMVC.Controllers
 {
@@ -16,14 +18,26 @@ namespace BootCamp1_AspMVC.Controllers
 
         public IActionResult Index()
         {
-            var emp = _context.Employees.ToList();
+            var emp = _context.Employees.Include(e => e.Department).ToList();
             return View(emp);
         }
+
+
+        private void CreateListDepartment(int selectId = 0)
+        {
+            List<Department> Dept = _context.Departments.ToList();
+            SelectList DeptList = new SelectList(Dept, "Id", "Name", 0);
+            ViewBag.DepartmentList = DeptList;
+        }
+
+
 
 
         [HttpGet]
         public IActionResult Create()
         {
+            CreateListDepartment();
+
             return View();
         }
 
@@ -44,6 +58,7 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Edit(int Id)
         {
             var cate = _context.Employees.Find(Id);
+            CreateListDepartment();
             return View(cate);
         }
 
