@@ -1,0 +1,45 @@
+﻿
+@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Categories</h1>
+
+
+<partial name="_NotificationsPartial" />
+
+<div class="text-end">
+    <a asp-action="Create" class="btn btn-primary mb-3">Add Category</a>
+</div>
+
+<table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+
+
+        @foreach(var item in Model)
+        {
+
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>
+                    <a asp-action="Edit" asp-route-Id="@item.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+
+        }
+
+    </tbody>
+</table>
+
