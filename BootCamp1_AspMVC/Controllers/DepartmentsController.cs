@@ -19,11 +19,14 @@ namespace BootCamp1_AspMVC.Controllers
             _context = context;
         }
 
-        // GET: Departments
-        public async Task<IActionResult> Index()
+
+
+        public IActionResult Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            var emp = _context.Departments.ToList();
+            return View(emp);
         }
+
 
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)

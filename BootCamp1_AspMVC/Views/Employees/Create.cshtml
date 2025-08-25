@@ -33,6 +33,7 @@
         <label for="DepartmentId">Category</label>
 
         <select asp-for="DepartmentId" name="DepartmentId" class="form-select" asp-items="@ViewBag.DepartmentList">
+            <option value="0">-- Select Department --</option>
         </select>
     </div>
 
