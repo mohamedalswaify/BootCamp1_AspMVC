@@ -36,6 +36,11 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpPost]
         public IActionResult Create(Category category)
         {
+
+            if(!ModelState.IsValid)
+            {
+                return View(category);
+            }
             _context.Categories.Add(category);
             _context.SaveChanges();
             TempData["Success"] = "Category created successfully!";

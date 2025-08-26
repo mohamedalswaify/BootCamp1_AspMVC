@@ -20,11 +20,40 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Index()
         {
 
-            var products = 
-                _context.Products.Include(e=>e.Category).ToList();
-
-
+            List<ProductDto> products = 
+                _context.Products
+                .Include(e=>e.Category)
+                .Select(e=> new ProductDto { 
+                Id = e.Id,
+                    ProductName=e.ProductName,
+                    Price = e.Price,
+                    Qty = e.Qty,
+                    CategoryName = e.Category.Name,
+                    Description = e.Description
+                })
+                .ToList();
             return View(products);
+
+        }
+
+
+        public IActionResult GetAll()
+        {
+
+            var products =
+             _context.Products
+             .Include(e => e.Category)
+             .Select(e => new ProductDto
+             {
+                 Id = e.Id,
+                 ProductName = e.ProductName,
+                 Price = e.Price,
+                 Qty = e.Qty,
+                 CategoryName = e.Category.Name,
+                 Description = e.Description
+             })
+             .ToList();
+            return Ok(products);
 
         }
 

@@ -23,6 +23,8 @@ namespace BootCamp1_AspMVC.Controllers
         }
 
 
+   
+
         private void CreateListDepartment(int selectId = 0)
         {
             List<Department> Dept = _context.Departments.ToList();

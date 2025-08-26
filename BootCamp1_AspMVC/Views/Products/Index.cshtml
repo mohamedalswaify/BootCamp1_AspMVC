@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Product>
+﻿@using BootCamp1_AspMVC.Dtos
+@model IEnumerable<ProductDto>
 @{
     ViewData["Title"] = "Index";
 }
@@ -35,7 +36,7 @@
                 <td>@item.Description</td>
                 <td>@item.Price</td>
                 <td>@item.Qty</td>
-                <td>@item.Category.Name</td>
+                <td>@item.CategoryName</td>
                 <td>
                     <a asp-action="Edit" asp-route-Id="@item.Id" class="btn btn-warning">Edit</a>
                     <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger">Delete</a>
