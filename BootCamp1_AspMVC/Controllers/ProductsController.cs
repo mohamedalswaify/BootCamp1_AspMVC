@@ -36,26 +36,27 @@ namespace BootCamp1_AspMVC.Controllers
 
         }
 
-
         public IActionResult GetAll()
         {
 
-            var products =
-             _context.Products
-             .Include(e => e.Category)
-             .Select(e => new ProductDto
-             {
-                 Id = e.Id,
-                 ProductName = e.ProductName,
-                 Price = e.Price,
-                 Qty = e.Qty,
-                 CategoryName = e.Category.Name,
-                 Description = e.Description
-             })
-             .ToList();
+            List<ProductDto> products =
+                _context.Products
+                .Include(e => e.Category)
+                .Select(e => new ProductDto
+                {
+                    Id = e.Id,
+                    ProductName = e.ProductName,
+                    Price = e.Price,
+                    Qty = e.Qty,
+                    CategoryName = e.Category.Name,
+                    Description = e.Description
+                })
+                .ToList();
             return Ok(products);
 
         }
+
+
 
 
         private  void CreateListCategory(int selectId =0)
