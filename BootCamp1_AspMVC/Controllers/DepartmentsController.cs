@@ -7,37 +7,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BootCamp1_AspMVC.Data;
 using BootCamp1_AspMVC.Models;
+using BootCamp1_AspMVC.Repository.Base;
 
 namespace BootCamp1_AspMVC.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Department> _repository;
 
-        public DepartmentsController(ApplicationDbContext context)
+        public DepartmentsController(IRepository<Department> repository)
         {
-            _context = context;
+            _repository = repository;
+
         }
 
 
 
         public IActionResult Index()
         {
-            var emp = _context.Departments.ToList();
-            return View(emp);
+            var dept = _repository.FindAll();
+            return View(dept);
         }
 
 
         // GET: Departments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department =  _repository.FindById(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -61,8 +62,7 @@ namespace BootCamp1_AspMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
+                _repository.Insert(department);
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -76,7 +76,7 @@ namespace BootCamp1_AspMVC.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments.FindAsync(id);
+            var department = _repository.FindById(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -100,8 +100,7 @@ namespace BootCamp1_AspMVC.Controllers
             {
                 try
                 {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
+            _repository.Update(department);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -127,8 +126,7 @@ namespace BootCamp1_AspMVC.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = _repository.FindById(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -142,19 +140,23 @@ namespace BootCamp1_AspMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
+            var department =_repository.FindById(id);
             if (department != null)
             {
-                _context.Departments.Remove(department);
+                _repository.Delete(department);
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DepartmentExists(int id)
         {
-            return _context.Departments.Any(e => e.Id == id);
+                var cate = _repository.FindById(id);   
+                if (cate == null)
+                {
+                    return false;
+                }
+                return true;
+               
         }
     }
 }

@@ -1,23 +1,37 @@
 ﻿using BootCamp1_AspMVC.Data;
 using BootCamp1_AspMVC.Dtos;
 using BootCamp1_AspMVC.Models;
+using BootCamp1_AspMVC.Repository.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BootCamp1_AspMVC.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        //public CategoriesController(ApplicationDbContext context)
+        //{
+        //    _context = context;
+
+        //}
+
+
+
+        private readonly IRepository<Category> _repository;
+
+        public CategoriesController(IRepository<Category> repository)
         {
-            _context = context;
+            _repository = repository;
+
 
         }
 
+
         public IActionResult Index()
         {
-           var categories = _context.Categories.ToList();
+           //var categories = _context.Categories.ToList();
+           var categories = _repository.FindAll();
 
           
             return View(categories);
@@ -41,8 +55,11 @@ namespace BootCamp1_AspMVC.Controllers
             {
                 return View(category);
             }
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            //_context.Categories.Add(category);
+            //_context.SaveChanges();
+
+            _repository.Insert(category);
+
             TempData["Success"] = "Category created successfully!";
             return RedirectToAction("Index");
            
@@ -54,15 +71,19 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Edit(int Id)
         {
-            var cate= _context.Categories.Find(Id);
+            //var cate= _context.Categories.Find(Id);
+            var cate= _repository.FindById(Id);
             return View(cate);
         }
 
         [HttpPost]
         public IActionResult Edit(Category category)
         {
-            _context.Categories.Update(category);
-            _context.SaveChanges();
+            //_context.Categories.Update(category);
+            //_context.SaveChanges();
+
+            _repository.Update(category);
+
             TempData["Update"] = "Category updated successfully!";
             return RedirectToAction("Index");
 
@@ -73,15 +94,17 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Delete(int Id)
         {
-            var cate = _context.Categories.Find(Id);
+            //var cate = _context.Categories.Find(Id);
+            var cate =_repository.FindById(Id);
             return View(cate);
         }
 
         [HttpPost]
         public IActionResult Delete(Category category)
         {
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
+            //_context.Categories.Remove(category);
+            //_context.SaveChanges();
+            _repository.Delete(category);
             TempData["Remove"] = "Category deleted successfully!";
             return RedirectToAction("Index");
 

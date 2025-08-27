@@ -1,5 +1,6 @@
 ﻿using BootCamp1_AspMVC.Data;
 using BootCamp1_AspMVC.Models;
+using BootCamp1_AspMVC.Repository.Base;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -8,17 +9,31 @@ namespace BootCamp1_AspMVC.Controllers
 {
     public class EmployeesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
-        public EmployeesController(ApplicationDbContext context)
+        //public EmployeesController(ApplicationDbContext context)
+        //{
+        //    _context = context;
+
+        //}
+
+
+        private readonly IRepository<Employee> _repository ;
+        private readonly IRepository<Department> _repositoryDept ;
+
+        public EmployeesController(IRepository<Employee> repository, IRepository<Department> repositoryDept)
         {
-            _context = context;
+
+            _repository = repository;
+            _repositoryDept = repositoryDept;
+
 
         }
 
         public IActionResult Index()
         {
-            var emp = _context.Employees.Include(e => e.Department).ToList();
+    
+            var emp = _repository.FindAll;
             return View(emp);
         }
 
@@ -27,7 +42,7 @@ namespace BootCamp1_AspMVC.Controllers
 
         private void CreateListDepartment(int selectId = 0)
         {
-            List<Department> Dept = _context.Departments.ToList();
+            IEnumerable<Department> Dept = _repositoryDept.FindAll();
             SelectList DeptList = new SelectList(Dept, "Id", "Name", 0);
             ViewBag.DepartmentList = DeptList;
         }
@@ -46,8 +61,8 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpPost]
         public IActionResult Create(Employee emp)
         {
-            _context.Employees.Add(emp);
-            _context.SaveChanges();
+  
+            _repository.Insert(emp);
             TempData["Success"] = "Employee created successfully!";
             return RedirectToAction("Index");
 
@@ -59,7 +74,10 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Edit(int Id)
         {
-            var cate = _context.Employees.Find(Id);
+            var cate = _repository.FindById(Id);
+
+            
+
             CreateListDepartment();
             return View(cate);
         }
@@ -67,8 +85,9 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpPost]
         public IActionResult Edit(Employee emp)
         {
-            _context.Employees.Update(emp);
-            _context.SaveChanges();
+
+            _repository.Update(emp);
+
             TempData["Update"] = "Employee updated successfully!";
             return RedirectToAction("Index");
 
@@ -79,15 +98,17 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Delete(int Id)
         {
-            var cate = _context.Employees.Find(Id);
+            var cate = _repository.FindById(Id);
+
             return View(cate);
         }
 
         [HttpPost]
         public IActionResult Delete(Employee emp)
         {
-            _context.Employees.Remove(emp);
-            _context.SaveChanges();
+
+            _repository.Delete(emp);
+
             TempData["Remove"] = "Employee deleted successfully!";
             return RedirectToAction("Index");
 
