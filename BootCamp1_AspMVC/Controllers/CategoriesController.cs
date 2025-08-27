@@ -18,20 +18,30 @@ namespace BootCamp1_AspMVC.Controllers
 
 
 
-        private readonly IRepository<Category> _repository;
+        //private readonly IRepository<Category> _repository;
 
-        public CategoriesController(IRepository<Category> repository)
+        //public CategoriesController(IRepository<Category> repository)
+        //{
+        //    _repository = repository;
+
+
+        //}
+
+
+
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoriesController(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
-
-
+            _unitOfWork = unitOfWork;
         }
+
+
 
 
         public IActionResult Index()
         {
            //var categories = _context.Categories.ToList();
-           var categories = _repository.FindAll();
+           var categories = _unitOfWork.Categories.FindAll();
 
           
             return View(categories);
@@ -58,7 +68,7 @@ namespace BootCamp1_AspMVC.Controllers
             //_context.Categories.Add(category);
             //_context.SaveChanges();
 
-            _repository.Insert(category);
+            _unitOfWork.Categories.Insert(category);
 
             TempData["Success"] = "Category created successfully!";
             return RedirectToAction("Index");
@@ -72,7 +82,7 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Edit(int Id)
         {
             //var cate= _context.Categories.Find(Id);
-            var cate= _repository.FindById(Id);
+            var cate = _unitOfWork.Categories.FindById(Id);
             return View(cate);
         }
 
@@ -82,7 +92,7 @@ namespace BootCamp1_AspMVC.Controllers
             //_context.Categories.Update(category);
             //_context.SaveChanges();
 
-            _repository.Update(category);
+            _unitOfWork.Categories.Update(category);
 
             TempData["Update"] = "Category updated successfully!";
             return RedirectToAction("Index");
@@ -95,7 +105,7 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Delete(int Id)
         {
             //var cate = _context.Categories.Find(Id);
-            var cate =_repository.FindById(Id);
+            var cate = _unitOfWork.Categories.FindById(Id);
             return View(cate);
         }
 
@@ -104,7 +114,7 @@ namespace BootCamp1_AspMVC.Controllers
         {
             //_context.Categories.Remove(category);
             //_context.SaveChanges();
-            _repository.Delete(category);
+            _unitOfWork.Categories.Delete(category);
             TempData["Remove"] = "Category deleted successfully!";
             return RedirectToAction("Index");
 

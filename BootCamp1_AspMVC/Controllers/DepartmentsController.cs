@@ -13,19 +13,30 @@ namespace BootCamp1_AspMVC.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly IRepository<Department> _repository;
+        //    private readonly IRepository<Department> _repository;
 
-        public DepartmentsController(IRepository<Department> repository)
+        //    public DepartmentsController(IRepository<Department> repository)
+        //    {
+        //        _repository = repository;
+
+        //    }
+
+
+
+        private readonly IUnitOfWork _unitOfWork;
+    
+        public DepartmentsController(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
 
         }
 
 
 
+
         public IActionResult Index()
         {
-            var dept = _repository.FindAll();
+            var dept = _unitOfWork.Departments.FindAll();
             return View(dept);
         }
 
@@ -38,7 +49,7 @@ namespace BootCamp1_AspMVC.Controllers
                 return NotFound();
             }
 
-            var department =  _repository.FindById(id.Value);
+            var department = _unitOfWork.Departments.FindById(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -62,7 +73,7 @@ namespace BootCamp1_AspMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.Insert(department);
+                _unitOfWork.Departments.Insert(department);
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -76,7 +87,7 @@ namespace BootCamp1_AspMVC.Controllers
                 return NotFound();
             }
 
-            var department = _repository.FindById(id.Value);
+            var department = _unitOfWork.Departments.FindById(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -100,7 +111,7 @@ namespace BootCamp1_AspMVC.Controllers
             {
                 try
                 {
-            _repository.Update(department);
+                    _unitOfWork.Departments.Update(department);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,7 +137,7 @@ namespace BootCamp1_AspMVC.Controllers
                 return NotFound();
             }
 
-            var department = _repository.FindById(id.Value);
+            var department = _unitOfWork.Departments.FindById(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -140,17 +151,17 @@ namespace BootCamp1_AspMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department =_repository.FindById(id);
+            var department = _unitOfWork.Departments.FindById(id);
             if (department != null)
             {
-                _repository.Delete(department);
+                _unitOfWork.Departments.Delete(department);
             }
             return RedirectToAction(nameof(Index));
         }
 
         private bool DepartmentExists(int id)
         {
-                var cate = _repository.FindById(id);   
+                var cate = _unitOfWork.Departments.FindById(id);   
                 if (cate == null)
                 {
                     return false;

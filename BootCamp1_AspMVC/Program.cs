@@ -16,7 +16,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     );
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(MainRepository<>));
-builder.Services.AddTransient(typeof(IRepoEmployee), typeof(RepoEmployee));
+//builder.Services.AddTransient(typeof(IRepoEmployee), typeof(RepoEmployee));
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
