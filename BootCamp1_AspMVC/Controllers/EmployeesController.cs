@@ -4,6 +4,7 @@ using BootCamp1_AspMVC.Repository.Base;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 
 namespace BootCamp1_AspMVC.Controllers
 {
@@ -18,13 +19,14 @@ namespace BootCamp1_AspMVC.Controllers
         //}
 
 
-        private readonly IRepository<Employee> _repository ;
+        //private readonly IRepository<Employee> _repository ;
+        private readonly IRepoEmployee _repEmployee;
         private readonly IRepository<Department> _repositoryDept ;
 
-        public EmployeesController(IRepository<Employee> repository, IRepository<Department> repositoryDept)
+        public EmployeesController (IRepoEmployee repEmployee, IRepository<Department> repositoryDept)
         {
 
-            _repository = repository;
+            _repEmployee = repEmployee;
             _repositoryDept = repositoryDept;
 
 
@@ -33,7 +35,7 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Index()
         {
     
-            var emp = _repository.FindAll;
+            var emp = _repEmployee.FindAllemployee();
             return View(emp);
         }
 
@@ -61,8 +63,8 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpPost]
         public IActionResult Create(Employee emp)
         {
-  
-            _repository.Insert(emp);
+
+            _repEmployee.Insert(emp);
             TempData["Success"] = "Employee created successfully!";
             return RedirectToAction("Index");
 
@@ -74,7 +76,7 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Edit(int Id)
         {
-            var cate = _repository.FindById(Id);
+            var cate = _repEmployee.FindById(Id);
 
             
 
@@ -86,7 +88,7 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Edit(Employee emp)
         {
 
-            _repository.Update(emp);
+            _repEmployee.Update(emp);
 
             TempData["Update"] = "Employee updated successfully!";
             return RedirectToAction("Index");
@@ -98,7 +100,7 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Delete(int Id)
         {
-            var cate = _repository.FindById(Id);
+            var cate = _repEmployee.FindById(Id);
 
             return View(cate);
         }
@@ -107,7 +109,7 @@ namespace BootCamp1_AspMVC.Controllers
         public IActionResult Delete(Employee emp)
         {
 
-            _repository.Delete(emp);
+            _repEmployee.Delete(emp);
 
             TempData["Remove"] = "Employee deleted successfully!";
             return RedirectToAction("Index");
