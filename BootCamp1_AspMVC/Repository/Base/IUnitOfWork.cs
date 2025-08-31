@@ -7,6 +7,7 @@ namespace BootCamp1_AspMVC.Repository.Base
         IRepoEmployee Employees { get; }
         IRepository<Department> Departments { get; }
         IRepository<Category> Categories { get; }
-   
+
+
     }
 }
