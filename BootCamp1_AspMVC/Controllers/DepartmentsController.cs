@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using BootCamp1_AspMVC.Data;
 using BootCamp1_AspMVC.Models;
 using BootCamp1_AspMVC.Repository.Base;
+using BootCamp1_AspMVC.Filters;
 
 namespace BootCamp1_AspMVC.Controllers
 {
+    [SessionAuthorize]
     public class DepartmentsController : Controller
     {
         //    private readonly IRepository<Department> _repository;

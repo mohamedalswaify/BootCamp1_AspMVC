@@ -1,0 +1,67 @@
+﻿@using BootCamp1_AspMVC.ViewModel
+@model LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+        body{background:linear-gradient(135deg,#133A67,#2d5f9a);font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif}
+        .login-card{width:400px;background:#fff;border-radius:15px;padding:2rem;box-shadow:0 10px 25px rgba(0,0,0,.2);animation:fadeIn .8s ease-in-out}
+        .login-card h3{font-weight:700;color:#133A67}
+        .form-control{border-radius:10px;padding:.75rem}
+        .btn-custom{background:#133A67;color:#fff;font-weight:700;border-radius:10px;padding:.75rem}
+        .btn-custom:hover{background:#0f2c4d}
+       
+    </style>
+</head>
+<body>
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="login-card">
+            <div class="text-center mb-4">
+                <img src="https://cdn-icons-png.flaticon.com/512/5087/5087579.png" width="70" class="mb-3" alt="user" />
+                <h3>Welcome Back</h3>
+                <p class="text-muted">Please login to continue</p>
+            </div>
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input asp-for="Username" class="form-control" placeholder="Enter your username" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" required />
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="RememberMe" class="form-check-input" id="rememberMe" />
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn btn-custom w-100">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </button>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger mt-3">اسم المستخدم أو كلمة المرور غير صحيحة.</div>
+                }
+            </form>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">Don’t have an account? <a href="#" class="text-decoration-none">Register</a></small>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
