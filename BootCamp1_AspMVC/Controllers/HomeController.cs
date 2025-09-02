@@ -74,6 +74,17 @@ namespace BootCamp1_AspMVC.Controllers
             var emp = _unitOfWork.Employees.LoginByUser(username, password);
             if (emp != null)
             {
+
+                if(emp.Islock)
+                {
+                    ViewBag.Error = "المستخدم محظور من قبل المدير.";
+                    return View();
+                }
+
+
+
+
+
                 HttpContext.Session.SetString("Username", username);
                 return RedirectToAction("Index");
             }

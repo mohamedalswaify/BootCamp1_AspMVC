@@ -14,6 +14,8 @@ namespace BootCamp1_AspMVC.Models
 
         public  string Username { get; set; }
         public string Password { get; set; }
+
+        public bool Islock { get; set; } = false;   
         public int? DepartmentId { get; set; } 
         public Department? Department { get; set; }
 

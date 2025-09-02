@@ -22,6 +22,7 @@
             <th>Phone</th>
             <th>Address</th>
             <th>Department</th>
+            <th>Islock</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -36,6 +37,20 @@
                 <td>@item.Phone</td>
                 <td>@item.Address</td>
                 <td>@item.Department?.Name</td>
+
+                <td>
+                    @if(item.Islock)
+                    {
+                       <input type="checkbox" checked disabled />
+                    }
+                    else
+                    {
+                        <input type="checkbox"  disabled />
+                    }
+                </td>
+
+
+
                 <td>
                     <a asp-action="Edit" asp-route-Id="@item.Id" class="btn btn-warning">Edit</a>
                     <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger">Delete</a>
