@@ -51,9 +51,6 @@ namespace BootCamp1_AspMVC.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-
-       
-
             return View();
         }
 

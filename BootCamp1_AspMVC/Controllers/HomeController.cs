@@ -82,9 +82,6 @@ namespace BootCamp1_AspMVC.Controllers
                 }
 
 
-
-
-
                 HttpContext.Session.SetString("Username", username);
                 return RedirectToAction("Index");
             }
