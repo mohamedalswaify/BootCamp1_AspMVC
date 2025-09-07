@@ -5,7 +5,7 @@
 
 <h1>Add Product</h1>
 
-<form method="post" asp-action="Create">
+<form method="post" asp-action="Create" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="Name">Name</label>
         <input type="text" id="ProductName" name="ProductName" class="form-control" />
@@ -41,7 +41,13 @@
         <label for="Description">Description</label>
         <textarea id="Description" name="Description" class="form-control"></textarea>
     </div>
- 
+
+    <div class="mb-3">
+        <label for="ImageFile">Product Image</label>
+        <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" />
+    </div>
+
+
 
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-action="Index" class="btn btn-secondary">Back</a>

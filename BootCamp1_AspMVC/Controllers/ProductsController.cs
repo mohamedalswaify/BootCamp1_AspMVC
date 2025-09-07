@@ -11,11 +11,13 @@ namespace BootCamp1_AspMVC.Controllers
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
         public IActionResult Index()
         {
@@ -78,6 +80,42 @@ namespace BootCamp1_AspMVC.Controllers
 
 
 
+        private string? SaveImage(IFormFile? file)
+        {
+            if (file == null || file.Length == 0) return null;
+
+            // التحقق من الامتداد (اختياري لكنه مهم)
+            var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!allowed.Contains(ext))
+                throw new InvalidOperationException("امتداد الملف غير مسموح");
+
+            // مسار المجلد داخل wwwroot
+            var folder = Path.Combine("uploads", "products");
+            var rootFolder = Path.Combine(_env.WebRootPath, folder);
+
+            // إنشاء المجلد لو غير موجود
+            Directory.CreateDirectory(rootFolder);
+
+            // اسم ملف فريد
+            var fileName = $"{Guid.NewGuid():N}{ext}";
+            var fullPath = Path.Combine(rootFolder, fileName);
+
+            using (var stream = System.IO.File.Create(fullPath))
+            {
+                file.CopyTo(stream);
+            }
+
+            // نعيد المسار النسبي للاستخدام في <img src="~/{path}">
+            var relativePath = Path.Combine(folder, fileName).Replace('\\', '/');
+            return "/" + relativePath;
+        }
+
+
+
+
+
+
 
         [HttpGet]
         public IActionResult Create()
@@ -89,8 +127,10 @@ namespace BootCamp1_AspMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(Product product, IFormFile ImageFile)
         {
+            var path = SaveImage(ImageFile);
+            product.ImagePath = path;
             _context.Products.Add(product);
             _context.SaveChanges();
             TempData["Success"] = "Product created successfully!";
