@@ -5,25 +5,23 @@
 
 <h1>Edit Product</h1>
 
-<form method="post" asp-action="Edit">
+<form method="post" asp-action="Edit" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
     <div class="mb-3">
-        <label for="Name">Name</label>
+        <label for="ProductName">Name</label>
         <input type="text" asp-for="ProductName" name="ProductName" class="form-control" />
     </div>
-
 
     <div class="mb-3">
         <label for="Price">Price</label>
         <input type="text" asp-for="Price" name="Price" class="form-control" />
     </div>
 
-
-
     <div class="mb-3">
         <label for="Qty">Qty</label>
         <input type="text" asp-for="Qty" name="Qty" class="form-control" />
     </div>
-
 
     <div class="mb-3">
         <label for="Description">Description</label>
@@ -32,15 +30,24 @@
 
     <div class="mb-3">
         <label for="CategoryId">Category</label>
-
-        <select asp-for="CategoryId" name="CategoryId" class="form-select" asp-items="@ViewBag.CategoryList">
-           
-
-        </select>
+        <select asp-for="CategoryId" name="CategoryId" class="form-select" asp-items="@ViewBag.CategoryList"></select>
     </div>
 
+    <!-- ✅ الصورة الحالية -->
+    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+    {
+        <div class="mb-3">
+            <label>Current Image</label><br />
+            <img src="@Model.ImagePath" alt="Product Image" style="max-width:200px;max-height:200px;" />
+        </div>
+    }
+
+    <!-- ✅ رفع صورة جديدة (اختياري) -->
+    <div class="mb-3">
+        <label for="ImageFile">Replace Image (optional)</label>
+        <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" />
+    </div>
 
     <button type="submit" class="btn btn-primary">Edit</button>
     <a asp-action="Index" class="btn btn-secondary">Back</a>
-
 </form>

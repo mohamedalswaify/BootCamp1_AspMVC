@@ -19,6 +19,9 @@ namespace BootCamp1_AspMVC.Controllers
             _context = context;
             _env = env;
         }
+
+
+
         public IActionResult Index()
         {
 
@@ -31,7 +34,8 @@ namespace BootCamp1_AspMVC.Controllers
                     Price = e.Price,
                     Qty = e.Qty,
                     CategoryName = e.Category.Name,
-                    Description = e.Description
+                    Description = e.Description,
+                    ImagePath = e.ImagePath
                 })
                 .ToList();
             return View(products);
@@ -51,7 +55,8 @@ namespace BootCamp1_AspMVC.Controllers
                     Price = e.Price,
                     Qty = e.Qty,
                     CategoryName = e.Category.Name,
-                    Description = e.Description
+                    Description = e.Description,
+                    ImagePath = e.ImagePath
                 })
                 .ToList();
             return Ok(products);
@@ -113,6 +118,16 @@ namespace BootCamp1_AspMVC.Controllers
 
 
 
+        private void DeleteImageIfExists(string? relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath)) return;
+
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+        }
 
 
 
@@ -148,14 +163,42 @@ namespace BootCamp1_AspMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Product pro)
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Product pro, IFormFile? ImageFile)
         {
-            _context.Products.Update(pro);
-            _context.SaveChanges();
-            TempData["Update"] = "Product updated successfully!";
-            return RedirectToAction("Index");
+            try
+            {
+                var existing = _context.Products.AsNoTracking().FirstOrDefault(x => x.Id == pro.Id);
+                if (existing == null) return NotFound();
 
+                // لو في صورة جديدة: احذف القديمة واحفظ الجديدة
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    // احذف القديمة (إن وجدت)
+                    DeleteImageIfExists(existing.ImagePath);
+
+                    // احفظ الجديدة
+                    pro.ImagePath = SaveImage(ImageFile);
+                }
+                else
+                {
+                    // احتفظ بالقديمة كما هي
+                    pro.ImagePath = existing.ImagePath;
+                }
+
+                _context.Products.Update(pro);
+                _context.SaveChanges();
+                TempData["Update"] = "Product updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                CreateListCategory(pro.CategoryId);
+                return View(pro);
+            }
         }
+
 
 
 
@@ -167,15 +210,20 @@ namespace BootCamp1_AspMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(Product pro)
         {
-            _context.Products.Remove(pro);
+            var existing = _context.Products.Find(pro.Id);
+            if (existing == null) return NotFound();
+
+            // احذف الصورة من السيرفر أولاً
+            DeleteImageIfExists(existing.ImagePath);
+
+            _context.Products.Remove(existing);
             _context.SaveChanges();
             TempData["Remove"] = "Product deleted successfully!";
-            return RedirectToAction("Index");
-
+            return RedirectToAction(nameof(Index));
         }
-
 
 
 
