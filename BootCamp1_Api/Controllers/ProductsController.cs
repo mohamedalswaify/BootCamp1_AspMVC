@@ -1,5 +1,7 @@
-﻿using BootCamp1_AspMVC.Data;
+﻿using BootCamp1_Api.Dtos;
+using BootCamp1_AspMVC.Data;
 using BootCamp1_AspMVC.Dtos;
+using BootCamp1_AspMVC.Models;
 using BootCamp1_AspMVC.Repository.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +50,7 @@ namespace BootCamp1_Api.Controllers
 
 
         [HttpGet("{id:int}")]
-        public ActionResult<ProductDto> GetById(int id) 
+        public ActionResult<ProductDto> GetById(int id)
         {
             var product = _context.Products
             .AsNoTracking().
@@ -56,7 +58,7 @@ namespace BootCamp1_Api.Controllers
             .FirstOrDefault(e => e.Id == id);
             if (product == null)
             {
-                return NotFound(new {Message ="لم يتم العثور علي المنتج."});
+                return NotFound(new { Message = "لم يتم العثور علي المنتج." });
             }
 
             var productDto = new ProductDto
@@ -76,6 +78,83 @@ namespace BootCamp1_Api.Controllers
         }
 
 
+
+
+
+
+
+
+        [HttpPost]
+        [RequestSizeLimit(20 * 1024 * 1024)] // 20 ميجابايت
+        public async Task<IActionResult> Create([FromForm] ProductCreateRequest productDto)
+        {
+            var categoryExists = await _context.Categories
+                .AnyAsync(c => c.Id == productDto.CategoryId);
+            if (!categoryExists)
+                return BadRequest(new { Message = "الفئه المحدد غير موجودة." });
+
+            var product = new Product
+            {
+                ProductName = productDto.ProductName,
+                Price = productDto.Price,
+                Qty = productDto.Qty,
+                CategoryId = productDto.CategoryId,
+                Description = productDto.Description,
+                //  ImagePath = SaveImage(productDto.Image)
+            };
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+
+
+        }
+
+
+
+
+        [HttpPut("{id:int}")]
+        [RequestSizeLimit(20 * 1024 * 1024)] // 20 ميجابايت
+        public async Task<IActionResult> update(int id,[FromForm] ProductUpdateRequest productDto)
+        {
+            if (id != productDto.Id)
+                return BadRequest(new { Message = "المعرف المرسل لا يطابق مسار الطلب." });
+
+            var categoryExists = await _context.Categories
+                .AnyAsync(c => c.Id == productDto.CategoryId);
+            if (!categoryExists)
+                return BadRequest(new { Message = "الفئه المحدد غير موجودة." });
+
+            var existing = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (existing == null) return NotFound(new { Message = "لم يتم العثور على المنتج." });
+
+            existing.ProductName =productDto.ProductName;
+            existing.Price = productDto.Price;
+            existing.Qty = productDto.Qty;
+            existing.CategoryId = productDto.CategoryId;
+            existing.Description = productDto.Description;
+
+
+            _context.Products.Update(existing); 
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetById), new { id = productDto.Id }, existing);
+
+
+        }
+
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existing = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (existing == null) return NotFound(new { Message = "لم يتم العثور على المنتج." });
+
+            _context.Products.Remove(existing);
+            await _context.SaveChangesAsync();
+            return Ok(new {Message="تم الحذف بنجاح"});
+        }
 
 
 
